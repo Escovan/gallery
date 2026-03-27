@@ -9,7 +9,7 @@ define('PAGE_DESCRIPTION', "Deze roadtrip van ruim 2600 kilometer was meer dan e
 // --- FOTOMAPPEN ---
 define('IMAGE_DIR_ORIGINAL', 'images');        // Map voor je originele JPGs/PNGs
 define('IMAGE_DIR_PROCESSED', 'webp_images'); // Map waar de WebP-bestanden worden opgeslagen
-define('GEMINI_API_KEY', 'AIzaSyCGYCSmf06jN1Nl8eKDexLVdeJhe4FrOxw');
+define('GEMINI_API_KEY', '');
 // --- WATERMERK INSTELLINGEN ---
 define('WATERMARK_TEXT', '©2026 - J.M. van der Pal - Privé Collectie');
 define('WATERMARK_FONT', 'DejaVu-Sans'); // Zorg dat dit lettertype op je server staat
