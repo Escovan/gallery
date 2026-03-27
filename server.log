@@ -1,0 +1,10 @@
+[Fri Mar 27 04:47:55 2026] PHP 8.3.6 Development Server (http://localhost:8080) started
+[Fri Mar 27 04:48:36 2026] [::1]:49530 Accepted
+[Fri Mar 27 04:48:37 2026] [::1]:49530 [200]: GET /
+[Fri Mar 27 04:48:37 2026] [::1]:49530 Closing
+[Fri Mar 27 04:48:37 2026] [::1]:49540 Accepted
+[Fri Mar 27 04:48:37 2026] [::1]:49546 Accepted
+[Fri Mar 27 04:48:37 2026] [::1]:49540 [200]: GET /assets/style.css
+[Fri Mar 27 04:48:37 2026] [::1]:49546 [200]: GET /assets/script.js
+[Fri Mar 27 04:48:37 2026] [::1]:49540 Closing
+[Fri Mar 27 04:48:37 2026] [::1]:49546 Closing
