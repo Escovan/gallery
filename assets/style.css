@@ -1,4 +1,26 @@
 /* --- ALGEMENE STYLING --- */
+:root {
+    --bg-color: #f7faff;
+    --text-color: #333;
+    --card-bg: #ffffff;
+    --heading-color: #2c3e50;
+    --summary-color: #34495e;
+    --gallery-title-color: #555;
+    --box-shadow: rgba(0,0,0,0.1);
+    --box-shadow-hover: rgba(0,0,0,0.15);
+}
+
+.dark-mode {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --card-bg: #1e1e1e;
+    --heading-color: #ffffff;
+    --summary-color: #b0bec5;
+    --gallery-title-color: #bbb;
+    --box-shadow: rgba(255,255,255,0.05);
+    --box-shadow-hover: rgba(255,255,255,0.1);
+}
+
 html, body {
     height: 100%;
     margin: 0;
@@ -6,18 +28,40 @@ html, body {
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     padding: 25px;
-    color: #333;
+    background-color: var(--bg-color) !important;
+    color: var(--text-color);
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
+    transition: background-color 0.3s, color 0.3s;
 }
 main {
     flex-grow: 1;
 }
 h1 {
     text-align: center;
-    color: #2c3e50;
+    color: var(--heading-color);
     margin-bottom: 20px;
+}
+
+/* --- THEME TOGGLE BUTTON --- */
+.theme-toggle-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+#theme-toggle {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--text-color);
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+#theme-toggle:hover {
+    opacity: 0.8;
 }
 
 /* --- CONTAINERS (BESCHRIJVING, GALERIJ, FOOTER) --- */
@@ -25,15 +69,16 @@ h1 {
     max-width: 1400px;
     margin: 0 auto 30px auto;
     padding: 20px;
-    background-color: #ffffff;
+    background-color: var(--card-bg);
     border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 15px var(--box-shadow);
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
 .description-container {
     max-width: 900px;
 }
 details { padding: 10px 20px; }
-summary { font-weight: bold; font-size: 1.1em; color: #34495e; cursor: pointer; padding: 10px 0; outline: none; }
+summary { font-weight: bold; font-size: 1.1em; color: var(--summary-color); cursor: pointer; padding: 10px 0; outline: none; transition: color 0.3s;}
 .description-content p { line-height: 1.6; padding-top: 10px; margin: 0; }
 .footer-container { max-width: 1200px; margin: 2rem auto 0 auto; flex-shrink: 0; text-align: center; }
 .footer-logo-placeholder { height: 60px; margin: 0 auto 1rem auto; }
@@ -50,11 +95,11 @@ summary { font-weight: bold; font-size: 1.1em; color: #34495e; cursor: pointer; 
     justify-content: center;
 }
 .gallery-item {
-    background-color: #fff;
+    background-color: var(--card-bg);
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 8px var(--box-shadow);
+    transition: all 0.2s ease-in-out, background-color 0.3s;
     cursor: pointer;
     width: 180px;
     height: 220px;
@@ -64,7 +109,7 @@ summary { font-weight: bold; font-size: 1.1em; color: #34495e; cursor: pointer; 
 }
 .gallery-item:hover {
     transform: translateY(-5px) scale(1.03);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    box-shadow: 0 6px 15px var(--box-shadow-hover);
 }
 .gallery-item img {
     width: 100%;
@@ -76,10 +121,11 @@ summary { font-weight: bold; font-size: 1.1em; color: #34495e; cursor: pointer; 
     padding: 8px;
     font-size: 0.8em;
     text-align: center;
-    color: #555;
+    color: var(--gallery-title-color);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    transition: color 0.3s;
 }
 
 /* --- LIGHTBOX STYLING (MOBILE-FIRST) --- */
@@ -174,7 +220,7 @@ summary { font-weight: bold; font-size: 1.1em; color: #34495e; cursor: pointer; 
         justify-content: space-between;
         pointer-events: none; /* Maakt de onzichtbare laag onklikbaar */
     }
-    
+
     .lightbox-top-bar > * {
         pointer-events: auto; /* Maakt de knoppen binnenin weer klikbaar */
     }
@@ -185,7 +231,7 @@ summary { font-weight: bold; font-size: 1.1em; color: #34495e; cursor: pointer; 
         font-size: 3em;
         background-color: rgba(0, 0, 0, 0.2);
     }
-    
+
     /* Sluitknop verhuist naar de hoek rechtsboven */
     .lightbox-close {
         position: absolute;
