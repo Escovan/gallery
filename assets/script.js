@@ -30,16 +30,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- GALERIJ EN INFINITE SCROLL ---
     const galleryGrid = document.getElementById('gallery-grid');
+    const scrollSentinel = document.getElementById('scroll-sentinel');
     let clickableItems = [];
     let galleryImages = window.galleryImages || [];
     let loadedCount = window.initialImageCount || 0;
     const batchSize = 20;
+
+    // Event Delegation voor Lightbox
+    if (galleryGrid) {
+        galleryGrid.addEventListener('click', (e) => {
+            const item = e.target.closest('.gallery-clickable');
+            if (item) {
+                const index = Array.from(galleryGrid.children).indexOf(item);
+                if (index > -1) {
+                    showLightbox(index);
+                }
+            }
+        });
+    }
 
     // Functie om nieuwe items aan de DOM toe te voegen
     const appendImages = (count) => {
         if (!galleryGrid || loadedCount >= galleryImages.length) return;
 
         const limit = Math.min(loadedCount + count, galleryImages.length);
+        const fragment = document.createDocumentFragment();
+
         for (let i = loadedCount; i < limit; i++) {
             const imagePath = galleryImages[i];
 
@@ -57,39 +73,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
 
-            // Voeg click event toe voor de nieuwe afbeelding
-            div.addEventListener('click', () => {
-                showLightbox(clickableItems.indexOf(div));
-            });
-
-            galleryGrid.appendChild(div);
-            clickableItems.push(div);
+            fragment.appendChild(div);
         }
+
+        galleryGrid.appendChild(fragment);
         loadedCount = limit;
 
-        // Verplaats de observer naar het nieuwe laatste element
-        observeLastItem();
+        // Check if the sentinel is still visible, if so, load more
+        // This fixes the issue on large screens where one batch isn't enough to push the sentinel down
+        if (observer && scrollSentinel && loadedCount < galleryImages.length) {
+            setTimeout(() => {
+                const rect = scrollSentinel.getBoundingClientRect();
+                if (rect.top <= window.innerHeight + 400) {
+                    appendImages(batchSize);
+                }
+            }, 50);
+        } else if (loadedCount >= galleryImages.length && observer && scrollSentinel) {
+            observer.unobserve(scrollSentinel);
+        }
     };
 
     // --- INFINITE SCROLL OBSERVER ---
     let observer;
-    const observeLastItem = () => {
-        if (!galleryGrid || loadedCount >= galleryImages.length) return;
-
-        if (observer) {
-            observer.disconnect();
-        }
+    const initObserver = () => {
+        if (!galleryGrid || !scrollSentinel || loadedCount >= galleryImages.length) return;
 
         observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
                 appendImages(batchSize);
             }
-        }, { rootMargin: "200px" }); // Laad iets eerder dan het scherm bereikt
+        }, { rootMargin: "400px" }); // Laad iets eerder dan het scherm bereikt
 
-        const lastItem = galleryGrid.lastElementChild;
-        if (lastItem) {
-            observer.observe(lastItem);
-        }
+        observer.observe(scrollSentinel);
+
+        // Initial check in case the screen is so large the sentinel is immediately visible
+        // even before user scrolls, but the observer didn't catch the initial state change.
+        setTimeout(() => {
+             const rect = scrollSentinel.getBoundingClientRect();
+             if (rect.top <= window.innerHeight + 400 && loadedCount < galleryImages.length) {
+                 appendImages(batchSize);
+             }
+        }, 100);
     };
 
     // --- LIGHTBOX LOGICA ---
@@ -102,21 +126,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentIndex = 0;
 
-    // Haal initiele items op (de eerste batch die al geladen is in de HTML)
-    const initGalleryItems = () => {
-        if (!galleryGrid) return;
-        clickableItems = Array.from(galleryGrid.querySelectorAll('.gallery-clickable, .gallery-item'));
-        clickableItems.forEach((item, index) => {
-            item.addEventListener('click', () => {
-                showLightbox(index);
-            });
-        });
-        observeLastItem();
-    };
-
     const showLightbox = (index) => {
-        if (!clickableItems[index]) return;
-        const item = clickableItems[index];
+        const items = galleryGrid ? Array.from(galleryGrid.children) : [];
+        if (!items[index]) return;
+
+        const item = items[index];
         const fullSrc = item.dataset.full;
         let titleEl = item.querySelector('.gallery-item-title') || item.querySelector('.cover-item-title');
         const title = titleEl ? titleEl.textContent : item.dataset.full;
@@ -129,14 +143,16 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const showNextImage = () => {
-        if(clickableItems.length === 0) return;
-        const nextIndex = (currentIndex + 1) % clickableItems.length;
+        const items = galleryGrid ? Array.from(galleryGrid.children) : [];
+        if(items.length === 0) return;
+        const nextIndex = (currentIndex + 1) % items.length;
         showLightbox(nextIndex);
     };
 
     const showPrevImage = () => {
-        if(clickableItems.length === 0) return;
-        const prevIndex = (currentIndex - 1 + clickableItems.length) % clickableItems.length;
+        const items = galleryGrid ? Array.from(galleryGrid.children) : [];
+        if(items.length === 0) return;
+        const prevIndex = (currentIndex - 1 + items.length) % items.length;
         showLightbox(prevIndex);
     };
 
@@ -201,5 +217,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Initialize gallery
-    initGalleryItems();
+    initObserver();
 });
